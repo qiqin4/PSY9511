@@ -1,0 +1,72 @@
+---
+title: "Chapter 1: Introduction. \nReading Notes"
+author: ""
+format:
+  html:
+    embed-resources: true
+    toc: true
+    #toc-location: left
+editor: source
+---
+# 1. Machine learning - learning from data 
+* Statistical learning and python
+    * What is statistical learning - sets of tools to understand data 
+    * Tools category: supervised and unsupervised 
+        * Supervised learning:building a statistical model for predicting, or estimating, an output based on one or more inputs. Can be applied in fields such as business, medicine, astrophysics, and public policy 
+            * Data type: regression and classification 
+                * Regression models deal with the continuous data,
+                * Whereas classification deals with the categorical data 
+        * Unsupervised learning: with only inputs without supervised output, learn relationships and structure from such data. 
+            * Clustering, we are not predicting outputs 
+            * We are interested in whether there are groups or clusters among the data - when the dataset is enormous, it is hard to visualize the data 
+            * Principal components reduced the data dimensions 
+            * Even though there is a loss of information, it is possible to visually examine the data for evidence of clustering 
+            * A hard question: determining the number of clusters
+
+# 2. History of Statistical Learning 
+* Linear models - because non-linear methods are computationally difficult 
+    * 19th centuries - least squares - linear regression 
+    * 1936 linear discriminant analysis - binary data?
+    * 1940s logistic regression 
+    * 1970 generalized linear model - to describe an entire class of statistical learning methods that include both linear and logistic regression as special cases 
+* Non-linear models
+    * 1980s classification and regression trees were developed 
+    * Generalized additive models
+    * 1980s neural networks 
+    * 1990s support vector machines 
+* From now,statistical learning has become a new subfield in statistics with a focus on supervised and unsupervised modelling and prediction.
+* With the development of user-friendly software, transformation from techniques for statisticians and computer scientists to an essential toolkit for a broader community has become possible. 
+
+# 3. Notation and Simple Matrix Algebra
+* N number of observations 
+* P number of variables 
+* Xij the value of the jth variable for the ith observation, i = 1,2,...,n and j = 1,2,...,p. 
+* N rows and p columns 
+* (Vectors are, by default, represented as columns.) 
+* Multiplying two matrices 
+
+# 4. Models
+* Linear 
+	* Linear regression 
+	* Logistic regression 
+	* Linear discriminant analysis 
+	* Improvements of linear regression: stepwise selection, ridge regression, principal components regression, and the lasso. 
+
+* Non-linear
+	* Supervised 
+		* Tree-based: bagging, boosting, random forests
+		* Support vector machine for both linear and nonlinear classification
+		* Deep learning - non-linear regression and classification
+		* Survival analysis - regression approach when the output variable is not fully observed 
+	* Unsupervised 
+		* Principal components analysis 
+		* K-means clustering
+		* Hierarchical clustering 
+		* K-nearest neighbor classifier?
+		
+* Model evaluation 
+	* Cross-validation
+	* bootstrap
+
+* Linear methods have better interpretability and sometimes accuracy 
+
