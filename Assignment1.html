@@ -94,8 +94,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<section id="create-a-vector-of-100-standard-normally-distributed-numbers-and-visualize-them-with-a-histogram." class="level4">
-<h4 class="anchored" data-anchor-id="create-a-vector-of-100-standard-normally-distributed-numbers-and-visualize-them-with-a-histogram.">Create a vector of 100 standard normally distributed numbers and visualize them with a histogram.</h4>
+<section id="create-a-vector-of-100-standard-normally-distributed-numbers-and-visualize-them-with-a-histogram." class="level3">
+<h3 class="anchored" data-anchor-id="create-a-vector-of-100-standard-normally-distributed-numbers-and-visualize-them-with-a-histogram.">Create a vector of 100 standard normally distributed numbers and visualize them with a histogram.</h3>
 <div class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.pyplot <span class="im">import</span> subplots</span>
@@ -116,12 +116,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="show-rows-5-8-9-and-10-of-the-auto-dataset." class="level1">
-<h1>Show rows 5, 8, 9, and 10 of the Auto dataset.</h1>
-<div class="cell" data-execution_count="14">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>Auto <span class="op">=</span> pd.read_csv(<span class="st">'Auto.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="show-rows-5-8-9-and-10-of-the-auto-dataset." class="level3">
+<h3 class="anchored" data-anchor-id="show-rows-5-8-9-and-10-of-the-auto-dataset.">Show rows 5, 8, 9, and 10 of the Auto dataset.</h3>
+<div class="cell" data-execution_count="31">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>os.getcwd()</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>Auto <span class="op">=</span> pd.read_csv(<span class="st">'Auto.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-error">
-<pre><code>FileNotFoundError: [Errno 2] No such file or directory: 'Auto.csv'</code></pre>
+<pre><code>ModuleNotFoundError: No module named 'numpy.rec'</code></pre>
 </div>
 </div>
 </section>
