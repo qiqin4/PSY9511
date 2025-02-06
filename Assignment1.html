@@ -67,6 +67,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="Assignment1_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="Assignment1_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="Assignment1_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 </head>
@@ -94,9 +97,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<section id="create-a-vector-of-100-standard-normally-distributed-numbers-and-visualize-them-with-a-histogram." class="level3">
-<h3 class="anchored" data-anchor-id="create-a-vector-of-100-standard-normally-distributed-numbers-and-visualize-them-with-a-histogram.">Create a vector of 100 standard normally distributed numbers and visualize them with a histogram.</h3>
-<div class="cell" data-execution_count="12">
+<ul>
+<li><h3 id="create-a-vector-of-100-standard-normally-distributed-numbers-and-visualize-them-with-a-histogram." class="anchored">Create a vector of 100 standard normally distributed numbers and visualize them with a histogram.</h3></li>
+</ul>
+<div class="cell" data-execution_count="33">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.pyplot <span class="im">import</span> subplots</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -104,7 +108,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>nnumber<span class="op">=</span>rng.normal(size<span class="op">=</span><span class="dv">100</span>) </span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>fig,ax<span class="op">=</span>subplots(figsize<span class="op">=</span>(<span class="dv">6</span>,<span class="dv">4</span>))</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>ax.hist(nnumber)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="12">
+<div class="cell-output cell-output-display" data-execution_count="33">
 <pre><code>(array([ 1.,  4.,  5., 11., 24., 20., 22.,  8.,  3.,  2.]),
  array([-2.72718601, -2.18818993, -1.64919386, -1.11019779, -0.57120172,
         -0.03220565,  0.50679042,  1.04578649,  1.58478256,  2.12377863,
@@ -115,18 +119,264 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="Assignment1_files/figure-html/cell-2-output-2.png" class="img-fluid"></p>
 </div>
 </div>
-</section>
-<section id="show-rows-5-8-9-and-10-of-the-auto-dataset." class="level3">
-<h3 class="anchored" data-anchor-id="show-rows-5-8-9-and-10-of-the-auto-dataset.">Show rows 5, 8, 9, and 10 of the Auto dataset.</h3>
-<div class="cell" data-execution_count="31">
+<ul>
+<li><h4 id="show-rows-5-8-9-and-10-of-the-auto-dataset." class="anchored">Show rows 5, 8, 9, and 10 of the Auto dataset.</h4></li>
+</ul>
+<div class="cell" data-execution_count="34">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>os.getcwd()</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>Auto <span class="op">=</span> pd.read_csv(<span class="st">'Auto.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-error">
-<pre><code>ModuleNotFoundError: No module named 'numpy.rec'</code></pre>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>Auto <span class="op">=</span> pd.read_csv(<span class="st">'Auto.csv'</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>Auto.index</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="34">
+<pre><code>RangeIndex(start=0, stop=397, step=1)</code></pre>
 </div>
 </div>
+<div class="cell" data-execution_count="35">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>Auto.iloc[[<span class="dv">4</span>,<span class="dv">7</span>,<span class="dv">8</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="35">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">mpg</th>
+<th data-quarto-table-cell-role="th">cylinders</th>
+<th data-quarto-table-cell-role="th">displacement</th>
+<th data-quarto-table-cell-role="th">horsepower</th>
+<th data-quarto-table-cell-role="th">weight</th>
+<th data-quarto-table-cell-role="th">acceleration</th>
+<th data-quarto-table-cell-role="th">year</th>
+<th data-quarto-table-cell-role="th">origin</th>
+<th data-quarto-table-cell-role="th">name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>17.0</td>
+<td>8</td>
+<td>302.0</td>
+<td>140</td>
+<td>3449</td>
+<td>10.5</td>
+<td>70</td>
+<td>1</td>
+<td>ford torino</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">7</td>
+<td>14.0</td>
+<td>8</td>
+<td>440.0</td>
+<td>215</td>
+<td>4312</td>
+<td>8.5</td>
+<td>70</td>
+<td>1</td>
+<td>plymouth fury iii</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">8</td>
+<td>14.0</td>
+<td>8</td>
+<td>455.0</td>
+<td>225</td>
+<td>4425</td>
+<td>10.0</td>
+<td>70</td>
+<td>1</td>
+<td>pontiac catalina</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<ul>
+<li><h4 id="show-the-last-three-columns-of-the-auto-dataset." class="anchored">Show the last three columns of the Auto dataset.</h4></li>
+</ul>
+<div class="cell" data-execution_count="36">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>Auto.iloc[:,<span class="op">-</span><span class="dv">3</span>:]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="36">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">year</th>
+<th data-quarto-table-cell-role="th">origin</th>
+<th data-quarto-table-cell-role="th">name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>70</td>
+<td>1</td>
+<td>chevrolet chevelle malibu</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>70</td>
+<td>1</td>
+<td>buick skylark 320</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>70</td>
+<td>1</td>
+<td>plymouth satellite</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>70</td>
+<td>1</td>
+<td>amc rebel sst</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>70</td>
+<td>1</td>
+<td>ford torino</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">392</td>
+<td>82</td>
+<td>1</td>
+<td>ford mustang gl</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">393</td>
+<td>82</td>
+<td>2</td>
+<td>vw pickup</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">394</td>
+<td>82</td>
+<td>1</td>
+<td>dodge rampage</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">395</td>
+<td>82</td>
+<td>1</td>
+<td>ford ranger</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">396</td>
+<td>82</td>
+<td>1</td>
+<td>chevy s-10</td>
+</tr>
+</tbody>
+</table>
+
+<p>397 rows × 3 columns</p>
+</div>
+</div>
+</div>
+<ul>
+<li><h4 id="show-all-cars-with-five-cylinders-in-the-auto-dataset." class="anchored">Show all cars with five cylinders in the Auto dataset.</h4></li>
+</ul>
+<div class="cell" data-execution_count="37">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>Auto.loc[Auto[<span class="st">"cylinders"</span>]<span class="op">==</span><span class="dv">5</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="37">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">mpg</th>
+<th data-quarto-table-cell-role="th">cylinders</th>
+<th data-quarto-table-cell-role="th">displacement</th>
+<th data-quarto-table-cell-role="th">horsepower</th>
+<th data-quarto-table-cell-role="th">weight</th>
+<th data-quarto-table-cell-role="th">acceleration</th>
+<th data-quarto-table-cell-role="th">year</th>
+<th data-quarto-table-cell-role="th">origin</th>
+<th data-quarto-table-cell-role="th">name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">274</td>
+<td>20.3</td>
+<td>5</td>
+<td>131.0</td>
+<td>103</td>
+<td>2830</td>
+<td>15.9</td>
+<td>78</td>
+<td>2</td>
+<td>audi 5000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">297</td>
+<td>25.4</td>
+<td>5</td>
+<td>183.0</td>
+<td>77</td>
+<td>3530</td>
+<td>20.1</td>
+<td>79</td>
+<td>2</td>
+<td>mercedes benz 300d</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">327</td>
+<td>36.4</td>
+<td>5</td>
+<td>121.0</td>
+<td>67</td>
+<td>2950</td>
+<td>19.9</td>
+<td>80</td>
+<td>2</td>
+<td>audi 5000s (diesel)</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<section id="exercise-2" class="level1">
+<h1>Exercise 2</h1>
+<p>According to Wikipedia “Statistical bias is a systematic tendency in which the methods used to gather data and generate statistics present an inaccurate, skewed or biased depiction of reality” and “Variance is a measure of dispersion, meaning it is a measure of how far a set of numbers is spread out from their average value.” Source: https://en.wikipedia.org/wiki/Bias_(statistics). and https://en.wikipedia.org/wiki/Variance..</p>
+<p>In light of the Wikipedia definitions, answer the following questions:</p>
+<ul>
+<li><p>Consider Figure 2.11 in Introduction to Statistical Learning. Imagine we have a new observation with feature value x=70, and we want to make a prediction. Why does a prediction produced using the linear regression fit (yellow line) have higher bias than a prediction produced using the spline fits (blue line and green line)?</p>
+<p><strong>=&gt;</strong> Because the linear regression model is too simple and underfitted, it can not predict the data with high accuracy. In contrast, the spline fits are more complex and overfitted, and the predictions produced align with the original data points well.</p></li>
+<li><p>Consider Figure 2.10 in Introduction to Statistical Learning. Why does the very flexible fit (green line) have high variance?</p>
+<p><strong>=&gt;</strong> Because the flexible fit is overfitted to the original data points. When the mdoel is too complex and flexible, the fit is more sensitive to the data and it captures parts of the noise.</p></li>
+</ul>
+<p>Now answer the following questions:</p>
+<ul>
+<li><p>Consider Figure 2.11 again. Do any of the lines underfit the data? Do any of the lines overfit the data?</p>
+<p><strong>=&gt;</strong> The orange line underfits the data, and the green line overfits the data.</p></li>
+<li><p>Consider Figure 2.10 again. Do any of the lines underfit the data? Do any of the lines overfit the data?</p>
+<p><strong>=&gt;</strong> There is no line underfit the data. The green line is overfitted.</p></li>
+</ul>
+</section>
+<section id="exercise-3" class="level1">
+<h1>Exercise 3</h1>
+<p>Can you find an example of a paper within your field which uses machine learning? Please provide a link to the paper. If you cannot find any examples, could you perhaps think of a research question where machine learning could be useful?</p>
+<p>Yes here is an example: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10244912/">Gene–environment interaction analysis via deep learning</a></p>
 </section>
 
 </main>
