@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>assignment4</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Assignment4_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Assignment4_files/libs/quarto-html/quarto.js"></script>
+<script src="Assignment4_files/libs/quarto-html/popper.min.js"></script>
+<script src="Assignment4_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Assignment4_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Assignment4_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Assignment4_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Assignment4_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Assignment4_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Assignment4_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+
+
+<p><strong>0. Prepare the dataset for the subsequent modelling.</strong></p>
+<pre><code>1. Download the heart disease dataset from https://www.statlearning.com/s/Heart.csv
+2. Load the dataset and drop all variables except the predictors Age, Sex, ChestPain, RestBP, Chol, and the target variable AHD. Drop all rows containing a NaN value.
+3. Onehot encode the variable ChestPain. This means that where you before had a single column with one of four values ['typical', 'asymptomatic', 'nonanginal', 'nontypical'], you will now have four binary columns (their names don't matter), akin to 'ChestPain_typical' 'ChestPain_asymptomatic', 'ChestPain_nonanginal', 'ChestPain_nontypical'. A row that before had ChestPain='typical' will now have ChestPain_typical=1 and the other three columns set to 0, ChestPain='asymptomatic' will have ChestPain_asymptomatic=1 and the other three set to 0, etc.
+4. Binary encode the target variable AHD such that 'No'=0 and 'Yes'=1.</code></pre>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1: Load the dataset</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">"https://www.statlearning.com/s/Heart.csv"</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>Heart <span class="op">=</span> pd.read_csv(url)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 2: Keep relevant columns</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>Heart <span class="op">=</span> Heart[[<span class="st">'Age'</span>, <span class="st">'Sex'</span>, <span class="st">'ChestPain'</span>, <span class="st">'RestBP'</span>, <span class="st">'Chol'</span>, <span class="st">'AHD'</span>]]</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 3: Drop rows with any missing values</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>Heart <span class="op">=</span> Heart.dropna()</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 4: One-hot encode 'ChestPain'</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>Heart <span class="op">=</span> pd.get_dummies(Heart, columns<span class="op">=</span>[<span class="st">'ChestPain'</span>])</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>Heart.iloc[:, <span class="op">-</span><span class="dv">4</span>:] <span class="op">=</span> Heart.iloc[:, <span class="op">-</span><span class="dv">4</span>:].astype(<span class="bu">int</span>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 5: Binary encode 'AHD': 'No' → 0, 'Yes' → 1</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>Heart[<span class="st">'AHD'</span>] <span class="op">=</span> Heart[<span class="st">'AHD'</span>].<span class="bu">map</span>({<span class="st">'No'</span>: <span class="dv">0</span>, <span class="st">'Yes'</span>: <span class="dv">1</span>})</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>Heart.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/var/folders/sx/vwqvh81108b_mls63cm7cgcw0000gp/T/ipykernel_87181/515935684.py:15: FutureWarning: Setting an item of incompatible dtype is deprecated and will raise in a future error of pandas. Value '0      0
+1      1
+2      1
+3      0
+4      0
+      ..
+298    0
+299    1
+300    1
+301    0
+302    0
+Name: ChestPain_asymptomatic, Length: 303, dtype: int64' has dtype incompatible with bool, please explicitly cast to a compatible dtype first.
+  Heart.iloc[:, -4:] = Heart.iloc[:, -4:].astype(int)
+/var/folders/sx/vwqvh81108b_mls63cm7cgcw0000gp/T/ipykernel_87181/515935684.py:15: FutureWarning: Setting an item of incompatible dtype is deprecated and will raise in a future error of pandas. Value '0      0
+1      0
+2      0
+3      1
+4      0
+      ..
+298    0
+299    0
+300    0
+301    0
+302    1
+Name: ChestPain_nonanginal, Length: 303, dtype: int64' has dtype incompatible with bool, please explicitly cast to a compatible dtype first.
+  Heart.iloc[:, -4:] = Heart.iloc[:, -4:].astype(int)
+/var/folders/sx/vwqvh81108b_mls63cm7cgcw0000gp/T/ipykernel_87181/515935684.py:15: FutureWarning: Setting an item of incompatible dtype is deprecated and will raise in a future error of pandas. Value '0      0
+1      0
+2      0
+3      0
+4      1
+      ..
+298    0
+299    0
+300    0
+301    1
+302    0
+Name: ChestPain_nontypical, Length: 303, dtype: int64' has dtype incompatible with bool, please explicitly cast to a compatible dtype first.
+  Heart.iloc[:, -4:] = Heart.iloc[:, -4:].astype(int)
+/var/folders/sx/vwqvh81108b_mls63cm7cgcw0000gp/T/ipykernel_87181/515935684.py:15: FutureWarning: Setting an item of incompatible dtype is deprecated and will raise in a future error of pandas. Value '0      1
+1      0
+2      0
+3      0
+4      0
+      ..
+298    1
+299    0
+300    0
+301    0
+302    0
+Name: ChestPain_typical, Length: 303, dtype: int64' has dtype incompatible with bool, please explicitly cast to a compatible dtype first.
+  Heart.iloc[:, -4:] = Heart.iloc[:, -4:].astype(int)</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Age</th>
+<th data-quarto-table-cell-role="th">Sex</th>
+<th data-quarto-table-cell-role="th">RestBP</th>
+<th data-quarto-table-cell-role="th">Chol</th>
+<th data-quarto-table-cell-role="th">AHD</th>
+<th data-quarto-table-cell-role="th">ChestPain_asymptomatic</th>
+<th data-quarto-table-cell-role="th">ChestPain_nonanginal</th>
+<th data-quarto-table-cell-role="th">ChestPain_nontypical</th>
+<th data-quarto-table-cell-role="th">ChestPain_typical</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>63</td>
+<td>1</td>
+<td>145</td>
+<td>233</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>67</td>
+<td>1</td>
+<td>160</td>
+<td>286</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>67</td>
+<td>1</td>
+<td>120</td>
+<td>229</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>37</td>
+<td>1</td>
+<td>130</td>
+<td>250</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>41</td>
+<td>0</td>
+<td>130</td>
+<td>204</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p><strong>1. Fit a model using a standard train/validation split through multiple steps.</strong></p>
+<p>1.1. Write a function “stratified_split” that takes three arguments: A dataframe, a number of folds, and a list of variables to stratify by. The function should return a list of dataframes, one for each fold, where the dataframes are stratified by the variables in the list. Test that the function works by splitting the dataset into two folds based on ‘AHD’, ‘Age’ and ‘RestBP’ and print the size of each fold, the counts of 0s and 1s in AHD, and the mean of each of ‘Age’ and ‘RestBP’ (all these should be printed individually per fold). Ensure that the function does not modify the original dataframe.</p>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1: write a function</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> StratifiedKFold</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> stratified_split(df, n_folds, stratify_vars):</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    df_copy <span class="op">=</span> df.copy()</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create a new column that represents the stratification group</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    df_copy[<span class="st">'stratify_group'</span>] <span class="op">=</span> df_copy[stratify_vars].astype(<span class="bu">str</span>).agg(<span class="st">'-'</span>.join, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    skf <span class="op">=</span> StratifiedKFold(n_splits<span class="op">=</span>n_folds, shuffle<span class="op">=</span><span class="va">True</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    folds <span class="op">=</span> []</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _, test_idx <span class="kw">in</span> skf.split(df_copy, df_copy[<span class="st">'stratify_group'</span>]):</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        fold_df <span class="op">=</span> df_copy.iloc[test_idx].drop(columns<span class="op">=</span>[<span class="st">'stratify_group'</span>]).copy()</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        folds.append(fold_df)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> folds</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 2: test the function </span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Assume 'Heart' DataFrame is already loaded and preprocessed as per your earlier steps</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply stratified_split on 'AHD', 'Age', and 'RestBP'</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>folds <span class="op">=</span> stratified_split(Heart, <span class="dv">2</span>, [<span class="st">'AHD'</span>, <span class="st">'Age'</span>, <span class="st">'RestBP'</span>])</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Print fold statistics</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, fold <span class="kw">in</span> <span class="bu">enumerate</span>(folds):</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Fold </span><span class="sc">{</span>i<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Size: </span><span class="sc">{</span><span class="bu">len</span>(fold)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"AHD=0 count: </span><span class="sc">{</span>(fold[<span class="st">'AHD'</span>] <span class="op">==</span> <span class="dv">0</span>)<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"AHD=1 count: </span><span class="sc">{</span>(fold[<span class="st">'AHD'</span>] <span class="op">==</span> <span class="dv">1</span>)<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Mean Age: </span><span class="sc">{</span>fold[<span class="st">'Age'</span>]<span class="sc">.</span>mean()<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Mean RestBP: </span><span class="sc">{</span>fold[<span class="st">'RestBP'</span>]<span class="sc">.</span>mean()<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"-"</span> <span class="op">*</span> <span class="dv">30</span>)</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fold 1
+Size: 152
+AHD=0 count: 84
+AHD=1 count: 68
+Mean Age: 54.66
+Mean RestBP: 131.25
+------------------------------
+Fold 2
+Size: 151
+AHD=0 count: 80
+AHD=1 count: 71
+Mean Age: 54.22
+Mean RestBP: 132.13
+------------------------------</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/Users/qiqi/miniforge3/envs/python-for-scicomp/lib/python3.12/site-packages/sklearn/model_selection/_split.py:776: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=2.
+  warnings.warn(</code></pre>
+</div>
+</div>
+<p>1.2. Write a function ‘fit_and_predict’ that takes 4 arguments: A training set, a validation set, a list of predictors, and a target variable. The function should fit a logistic regression model to the training set using the predictors and target variable, and return the predictions of the model on the validation set.</p>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fit_and_predict(train_df, valid_df, predictors, target):</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create and fit the logistic regression model</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> LogisticRegression(max_iter<span class="op">=</span><span class="dv">1000</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    model.fit(train_df[predictors], train_df[target])</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Predict probabilities on validation set (only the probability of class 1)</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    predictions <span class="op">=</span> model.predict_proba(valid_df[predictors])[:, <span class="dv">1</span>]</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> predictions</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>1.3. Write a function ‘fit_and_predict_standardized’ that takes 5 arguments: A training set, a validation set, a list of predictors, a target variable, and a list of variables to standardize. Using a loop (or a scaler), the function should z-score standardize the given variables in both the training set and the validation set based on the mean and standard deviation in the training set. Then, the function should call the ‘fit_and_predict’ function and return its result. Ensure that the function does not modify the original dataframes. Test the function using the train and validation set from above (e.g.&nbsp;the two folds from the split), while standardizing the ‘Age’, ‘RestBP’ and ‘Chol’ variables (as mentioned above, the target should be AHD, and you should also include the remaining predictors: ‘Sex’ and the ChestPain-variables)</p>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1: write a function </span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fit_and_predict_standardized(train_df, valid_df, predictors, target, standardize_vars):</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Copy data to avoid modifying the original dataframes</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    train_df <span class="op">=</span> train_df.copy()</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    valid_df <span class="op">=</span> valid_df.copy()</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Standardize variables using z-score (based on training data)</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> var <span class="kw">in</span> standardize_vars:</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        mean <span class="op">=</span> train_df[var].mean()</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        std <span class="op">=</span> train_df[var].std()</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        train_df[var] <span class="op">=</span> (train_df[var] <span class="op">-</span> mean) <span class="op">/</span> std</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        valid_df[var] <span class="op">=</span> (valid_df[var] <span class="op">-</span> mean) <span class="op">/</span> std  <span class="co"># use training stats</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Fit and predict using logistic regression</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> fit_and_predict(train_df, valid_df, predictors, target)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 2: test the function </span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Define columns</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>standardize_vars <span class="op">=</span> [<span class="st">'Age'</span>, <span class="st">'RestBP'</span>, <span class="st">'Chol'</span>]</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>predictors <span class="op">=</span> [<span class="st">'Age'</span>, <span class="st">'Sex'</span>, <span class="st">'RestBP'</span>, <span class="st">'Chol'</span>] <span class="op">+</span> [col <span class="cf">for</span> col <span class="kw">in</span> Heart.columns <span class="cf">if</span> col.startswith(<span class="st">'ChestPain_'</span>)]</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>target <span class="op">=</span> <span class="st">'AHD'</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Use folds[0] for training, folds[1] for validation</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>predictions <span class="op">=</span> fit_and_predict_standardized(folds[<span class="dv">0</span>], folds[<span class="dv">1</span>], predictors, target, standardize_vars)</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Preview predictions</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(predictions[:<span class="dv">5</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[0.8924791  0.87586785 0.29629782 0.57033586 0.85776799]</code></pre>
+</div>
+</div>
+<p>1.4. Write a function ‘fit_and_compute_auc’ that takes 5 arguments: A training set, a validation set, a list of predictors, a target variable, and a list of variables to standardize. The function should call the ‘fit_and_predict_standardized’ function to retrieve out-of-sample predictions for the validation set. Based on these and the ground truth labels in the validation set, it should compute and return the AUC. Test the function using the train and test set from above, while standardizing the ‘Age’, ‘RestBP’ and ‘Chol’ variables (and including the remaining predictors). Print the AUC.</p>
+<div class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1: write a function</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> roc_auc_score</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fit_and_compute_auc(train_df, valid_df, predictors, target, standardize_vars):</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Get predicted probabilities</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    preds <span class="op">=</span> fit_and_predict_standardized(train_df, valid_df, predictors, target, standardize_vars)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Compute AUC using ground truth vs predicted probs</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    auc <span class="op">=</span> roc_auc_score(valid_df[target], preds)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> auc</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 2: test the function </span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Define columns</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>standardize_vars <span class="op">=</span> [<span class="st">'Age'</span>, <span class="st">'RestBP'</span>, <span class="st">'Chol'</span>]</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>predictors <span class="op">=</span> [<span class="st">'Age'</span>, <span class="st">'Sex'</span>, <span class="st">'RestBP'</span>, <span class="st">'Chol'</span>] <span class="op">+</span> [col <span class="cf">for</span> col <span class="kw">in</span> Heart.columns <span class="cf">if</span> col.startswith(<span class="st">'ChestPain_'</span>)]</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>target <span class="op">=</span> <span class="st">'AHD'</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Use two folds created earlier</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>train_set <span class="op">=</span> folds[<span class="dv">0</span>]</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>valid_set <span class="op">=</span> folds[<span class="dv">1</span>]</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate AUC</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>auc <span class="op">=</span> fit_and_compute_auc(train_set, valid_set, predictors, target, standardize_vars)</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"AUC: </span><span class="sc">{</span>auc<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>AUC: 0.8528</code></pre>
+</div>
+</div>
+<p><strong>2. Perform a cross-validation.</strong></p>
+<p>Use the ‘stratified_split’ function to split the dataset into 10 folds, stratified on variables you find reasonable. For each fold, use the ‘fit_and_compute_auc’ function to compute the AUC of the model on the held-out validation set. Print the mean and standard deviation of the AUCs across the 10 folds.</p>
+<div class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>cv_folds <span class="op">=</span> stratified_split(Heart, <span class="dv">10</span>, stratify_vars<span class="op">=</span>[<span class="st">'AHD'</span>])</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Cross-validation loop</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>auc_scores <span class="op">=</span> []</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Use the i-th fold as validation, the rest as training</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    valid_fold <span class="op">=</span> cv_folds[i]</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    train_folds <span class="op">=</span> [cv_folds[j] <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>) <span class="cf">if</span> j <span class="op">!=</span> i]</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    train_df <span class="op">=</span> pd.concat(train_folds, ignore_index<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Compute AUC</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    auc <span class="op">=</span> fit_and_compute_auc(train_df, valid_fold, predictors, target, standardize_vars)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    auc_scores.append(auc)</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Fold </span><span class="sc">{</span>i<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss"> AUC: </span><span class="sc">{</span>auc<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Report mean and standard deviation of AUCs</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>mean_auc <span class="op">=</span> np.mean(auc_scores)</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>std_auc <span class="op">=</span> np.std(auc_scores)</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Mean AUC over 10 folds: </span><span class="sc">{</span>mean_auc<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Standard Deviation of AUC: </span><span class="sc">{</span>std_auc<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fold 1 AUC: 0.7941
+Fold 2 AUC: 0.8613
+Fold 3 AUC: 0.7815
+Fold 4 AUC: 0.8824
+Fold 5 AUC: 0.8125
+Fold 6 AUC: 0.8348
+Fold 7 AUC: 0.9509
+Fold 8 AUC: 0.8616
+Fold 9 AUC: 0.9107
+Fold 10 AUC: 0.7723
+
+Mean AUC over 10 folds: 0.8462
+Standard Deviation of AUC: 0.0552</code></pre>
+</div>
+</div>
+<p>OPTIONAL 3. Use the bootstrap to achieve a distribution of out-of-bag AUCs. For 100 iterations, create a bootstrap sample by sampling with replacement from the full dataset until you have a training set equal in size to 80% of the original data. Use the observations not included in the bootstrap sample as the validation set for that iteration.. Fit models and calculate AUCs for each iteration. Print the mean and standard deviation of the AUCs.</p>
+<div class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.utils <span class="im">import</span> resample</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of bootstrap iterations</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>n_iterations <span class="op">=</span> <span class="dv">100</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>n_size <span class="op">=</span> <span class="bu">int</span>(<span class="fl">0.8</span> <span class="op">*</span> <span class="bu">len</span>(Heart))</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co"># To store AUCs</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>bootstrap_aucs <span class="op">=</span> []</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n_iterations):</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Bootstrap sample</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    train_df <span class="op">=</span> resample(Heart, n_samples<span class="op">=</span>n_size, replace<span class="op">=</span><span class="va">True</span>, random_state<span class="op">=</span><span class="dv">42</span> <span class="op">+</span> i)</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Get out-of-bag samples (not in training set)</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    oob_indices <span class="op">=</span> <span class="bu">list</span>(<span class="bu">set</span>(Heart.index) <span class="op">-</span> <span class="bu">set</span>(train_df.index))</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> oob_indices:  <span class="co"># Skip if no out-of-bag samples</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">continue</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>    valid_df <span class="op">=</span> Heart.loc[oob_indices]</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calculate AUC</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>    auc <span class="op">=</span> fit_and_compute_auc(train_df, valid_df, predictors, target, standardize_vars)</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>    bootstrap_aucs.append(auc)</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Iteration </span><span class="sc">{</span>i<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss"> AUC: </span><span class="sc">{</span>auc<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Report summary stats</span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>mean_bootstrap_auc <span class="op">=</span> np.mean(bootstrap_aucs)</span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>std_bootstrap_auc <span class="op">=</span> np.std(bootstrap_aucs)</span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Bootstrap Mean AUC: </span><span class="sc">{</span>mean_bootstrap_auc<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Bootstrap Std AUC: </span><span class="sc">{</span>std_bootstrap_auc<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Iteration 1 AUC: 0.7968
+Iteration 2 AUC: 0.8515
+Iteration 3 AUC: 0.7997
+Iteration 4 AUC: 0.8011
+Iteration 5 AUC: 0.8064
+Iteration 6 AUC: 0.7675
+Iteration 7 AUC: 0.8950
+Iteration 8 AUC: 0.8694
+Iteration 9 AUC: 0.8909
+Iteration 10 AUC: 0.8358
+Iteration 11 AUC: 0.8166
+Iteration 12 AUC: 0.8314
+Iteration 13 AUC: 0.8628
+Iteration 14 AUC: 0.8316
+Iteration 15 AUC: 0.8100
+Iteration 16 AUC: 0.8363
+Iteration 17 AUC: 0.8283
+Iteration 18 AUC: 0.8234
+Iteration 19 AUC: 0.8040
+Iteration 20 AUC: 0.8292
+Iteration 21 AUC: 0.8148
+Iteration 22 AUC: 0.7839
+Iteration 23 AUC: 0.8609
+Iteration 24 AUC: 0.8250
+Iteration 25 AUC: 0.7983
+Iteration 26 AUC: 0.8336
+Iteration 27 AUC: 0.8389
+Iteration 28 AUC: 0.8202
+Iteration 29 AUC: 0.8054
+Iteration 30 AUC: 0.8496
+Iteration 31 AUC: 0.8765
+Iteration 32 AUC: 0.8249
+Iteration 33 AUC: 0.8704
+Iteration 34 AUC: 0.7878
+Iteration 35 AUC: 0.7990
+Iteration 36 AUC: 0.8284
+Iteration 37 AUC: 0.8366
+Iteration 38 AUC: 0.8316
+Iteration 39 AUC: 0.8401
+Iteration 40 AUC: 0.8491
+Iteration 41 AUC: 0.8239
+Iteration 42 AUC: 0.8368
+Iteration 43 AUC: 0.8520
+Iteration 44 AUC: 0.8076
+Iteration 45 AUC: 0.8154
+Iteration 46 AUC: 0.8132
+Iteration 47 AUC: 0.8171
+Iteration 48 AUC: 0.8354
+Iteration 49 AUC: 0.7853
+Iteration 50 AUC: 0.8487
+Iteration 51 AUC: 0.8204
+Iteration 52 AUC: 0.8406
+Iteration 53 AUC: 0.8383
+Iteration 54 AUC: 0.8093
+Iteration 55 AUC: 0.7926
+Iteration 56 AUC: 0.8227
+Iteration 57 AUC: 0.8249
+Iteration 58 AUC: 0.8575
+Iteration 59 AUC: 0.8327
+Iteration 60 AUC: 0.8243
+Iteration 61 AUC: 0.8073
+Iteration 62 AUC: 0.8381
+Iteration 63 AUC: 0.8624
+Iteration 64 AUC: 0.8560
+Iteration 65 AUC: 0.7848
+Iteration 66 AUC: 0.7799
+Iteration 67 AUC: 0.8470
+Iteration 68 AUC: 0.8046
+Iteration 69 AUC: 0.8537
+Iteration 70 AUC: 0.8328
+Iteration 71 AUC: 0.8488
+Iteration 72 AUC: 0.8215
+Iteration 73 AUC: 0.8421
+Iteration 74 AUC: 0.8641
+Iteration 75 AUC: 0.8041
+Iteration 76 AUC: 0.7987
+Iteration 77 AUC: 0.8386
+Iteration 78 AUC: 0.8707
+Iteration 79 AUC: 0.8121
+Iteration 80 AUC: 0.8173
+Iteration 81 AUC: 0.8200
+Iteration 82 AUC: 0.8396
+Iteration 83 AUC: 0.8149
+Iteration 84 AUC: 0.7968
+Iteration 85 AUC: 0.8820
+Iteration 86 AUC: 0.8520
+Iteration 87 AUC: 0.8565
+Iteration 88 AUC: 0.8560
+Iteration 89 AUC: 0.8316
+Iteration 90 AUC: 0.8590
+Iteration 91 AUC: 0.8739
+Iteration 92 AUC: 0.8549
+Iteration 93 AUC: 0.8366
+Iteration 94 AUC: 0.8710
+Iteration 95 AUC: 0.8453
+Iteration 96 AUC: 0.8598
+Iteration 97 AUC: 0.8131
+Iteration 98 AUC: 0.8082
+Iteration 99 AUC: 0.8378
+Iteration 100 AUC: 0.8440
+
+Bootstrap Mean AUC: 0.8310
+Bootstrap Std AUC: 0.0258</code></pre>
+</div>
+</div>
+<p><strong>4. Theory</strong></p>
+<p><strong>4.1. List some benefits of wrapping code in functions rather than copying and pasting it multiple times.</strong></p>
+<p>Wrapping codes in functions allow you to reuse code efficiently without having to rewrite it multiple times, reducing the redundancy in the scripts. When there are changes, we only need to change the function once in stead of changing it everywhere.</p>
+<p><strong>4.2. Explain three classification metrics and their benefits and drawbacks.</strong></p>
+<ol type="a">
+<li>Accuracy: quatifies the proportion of correctly classified cases out of all cases. The benefit is that it is very interpretable, while the drawback is that it does not handle the imbalanced classes.</li>
+<li>True positive rate: the proportion of the true positives out of all the ground positives. The benefit is that it is interpretable, and it calculates the proportion of cases that are detected. It is useful when the cost of false negatives is high. However, it only focuses on one side of the classification problem and ignores everything else, like false positives or how well it handles negative cases.</li>
+<li>True negative rate: the proportion of the true negatives out of all ground negatives. It is interpretable, and useful when the cost of false positives is high. Its drawback is that it is also one-sided.</li>
+</ol>
+<p><strong>4.3. Write a couple of sentences comparing the three methods (train/validation, cross-validation, bootstrap) above as approaches to quantify model performance. Which one yielded the best results? Which one would you expect to yield the best results? Can you mention some theoretical benefits and drawbacks with each? Even if you didn’t do the optional bootstrap exercise you should reflect on this as an approach.</strong></p>
+<ol type="a">
+<li>the train/validation approach is fast and easy to implement. However it gives onlu one performance estimates, which can vary a lot depending on the split.</li>
+<li>cross-validation uses all the data to train models, providing more robust estimate by averaging over multiple splits. The drawbacks are that a)there are different choices of k yields different results b) multiple models have to be specified.</li>
+<li>bootstrap uses all data to train models, and gives a full distribution of performance metrics, can be used for uncertainty estimation(e.g., confidence intervals). The drawback is that there are different choices of b that yields different results</li>
+</ol>
+<p>Cross-validation likely yields the most consistent results, while bootstrap provides insight into the variability of model performance. Theoretically, cross-validation is preferrs for model selection, while bootstrap is powerful for uncertainty estimation. The train/validation split, though quick, is the least robust of the three.</p>
+<p><strong>4.4. Why do we stratify the dataset before splitting?</strong></p>
+<p>Because we want to ensure that all folds of the dataset have similar distributions in some given characteristics, such as the outcome variable, age, sex.</p>
+<p><strong>4.5. What other use cases can you think of for the bootstrap method?</strong></p>
+<p>We can use the bootstrap to estimate the confidence intervals for statistics such as regression coeficients. Bootstrap can also be used to simulate the null distribution and calculate p-values when traditional tests aren’t valid or assumptions are violated.</p>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
